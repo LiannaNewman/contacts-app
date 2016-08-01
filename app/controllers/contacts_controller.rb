@@ -1,10 +1,17 @@
 class ContactsController < ApplicationController
+
   def index
     @contacts = Contact.all
   end
 
   def show
-    @contact = Contact.find_by(id: params[:id])
+    contact = Contact.find_by(id: params[:id])
+    if current_user.contacts.include?(contact)
+      @contact = contact
+    else
+      flash[:warning] = "Hey sucka! Only look up your own contacts"
+      redirect_to '/contacts'
+    end
   end
 
   def new
@@ -15,7 +22,8 @@ class ContactsController < ApplicationController
       first_name: params[:first_name],
       last_name: params[:last_name],
       email: params[:email],
-      bio: params[:bio]
+      bio: params[:bio],
+      user_id: current_user.id
     )
     flash[:success] = "Contact created."
     redirect_to "/contacts/#{@contact.id}"
@@ -29,7 +37,7 @@ class ContactsController < ApplicationController
     @contact = Contact.find_by(id: params[:id])
     @contact.update(
       first_name: params[:first_name],
-      last_name: params[:last_name], 
+      last_name: params[:last_name],
       email: params[:email],
       bio: params[:bio]
     )
