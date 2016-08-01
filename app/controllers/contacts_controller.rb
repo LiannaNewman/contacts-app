@@ -1,7 +1,8 @@
 class ContactsController < ApplicationController
+  before_action :authenticate_user!
 
   def index
-    @contacts = Contact.all
+    @contacts = current_user.contacts
   end
 
   def show
