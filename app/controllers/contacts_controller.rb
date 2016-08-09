@@ -3,6 +3,10 @@ class ContactsController < ApplicationController
 
   def index
     @contacts = current_user.contacts
+    if params[:group]
+      group = Group.find_by(name: params[:group])
+      @contacts = group.contacts.where(user_id: current_user)
+    end
   end
 
   def show
